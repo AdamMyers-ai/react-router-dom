@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Route, Routes } from "react-router";
 import "./App.css";
 import PokemonList from "./components/PokemonList/PokemonList";
 import NavBar from "./components/NavBar/NavBar";
 import PokemonDetails from "./components/PokemonDetails/PokemonDetails";
 import PokemonForm from "./components/PokemonForm/PokemonForm";
+import * as pokemonService from "./services/pokemonService";
+// import {index, show} from "./services/pokemonService"
 
 const initialState = [
   { _id: 1, name: "bulbasaur", weight: 69, height: 7 },
@@ -21,6 +23,29 @@ function App() {
     newPokemonData._id = pokemon.length + 1;
     setPokemon([...pokemon, newPokemonData]);
   };
+
+  /* 
+    useEffect - used to run side effects
+    runs under 3 condition
+    1. Every time the component render
+      useEffect(()=> ...doesSomething)
+    2. Only once when the component initial render 
+      useEffect(()=> ...doesSomething, [])
+    3. Run on initial render and when dependency array changes
+      useEffect(()=> ...doesSomthing, [pokemon]) 
+  */
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // get back all the pokemon from the db
+      const allPokemon = await pokemonService.index();
+
+      // set those pokemon into state
+      setPokemon(allPokemon.results);
+      //Optional we could handle errors here with an error on screen
+    };
+    fetchData();
+  }, []);
 
   return (
     <>
